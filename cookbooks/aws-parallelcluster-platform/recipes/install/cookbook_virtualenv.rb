@@ -21,9 +21,36 @@ return if redhat_on_docker?
 
 install_pyenv 'pyenv for default python version'
 
+# alinux_extras_topic 'python 3.8' do
+#   topic 'python3.8'
+# end
+
 activate_virtual_env cookbook_virtualenv_name do
   pyenv_path cookbook_virtualenv_path
   python_version cookbook_python_version
-  requirements_path "cookbook_virtualenv/requirements.txt"
-  not_if { ::File.exist?("#{cookbook_virtualenv_path}/bin/activate") }
 end
+
+cookbook_file "#{virtualenv_path}/requirements.txt" do
+  source "cookbook_virtualenv/requirements.txt"
+  mode '0755'
+end
+
+bash 'pip install' do
+  user 'root'
+  group 'root'
+  cwd "#{node['cluster']['base_dir']}"
+  code <<-REQ
+    set -e
+    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/PyPi/dependencies.tar.gz dependencies.tar.gz
+    tar xzf dependencies.tar.gz
+    cd dependencies
+    #{virtualenv_path}/bin/pip install * -f ./ --no-index
+    REQ
+end
+
+# activate_virtual_env cookbook_virtualenv_name do
+#   pyenv_path cookbook_virtualenv_path
+#   python_version cookbook_python_version
+#   requirements_path "cookbook_virtualenv/requirements.txt"
+#   # not_if { ::File.exist?("#{cookbook_virtualenv_path}/bin/activate") }
+# end

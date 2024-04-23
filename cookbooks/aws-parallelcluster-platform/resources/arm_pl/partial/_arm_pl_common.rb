@@ -115,13 +115,23 @@ action :setup do
   gcc_tarball = "#{new_resource.sources_dir}/gcc-#{gcc_version}.tar.gz"
 
   # Get gcc tarball
-  remote_file gcc_tarball do
-    source gcc_url
-    mode '0644'
-    retries 5
-    retry_delay 10
-    ssl_verify_mode :verify_none
-    action :create_if_missing
+  # remote_file gcc_tarball do
+  #   source gcc_url
+  #   mode '0644'
+  #   retries 5
+  #   retry_delay 10
+  #   ssl_verify_mode :verify_none
+  #   action :create_if_missing
+  # end
+
+  bash 'get gcc from s3' do
+    user 'root'
+    group 'root'
+    cwd "#{node['cluster']['sources_dir']}"
+    code <<-GCC
+    set -e
+    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/gcc/gcc-#{gcc_version}.tar.gz #{gcc_tarball}
+    GCC
   end
 
   # Install gcc

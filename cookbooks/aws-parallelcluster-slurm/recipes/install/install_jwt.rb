@@ -20,13 +20,23 @@ jwt_url = "https://github.com/benmcollins/libjwt/archive/refs/tags/v#{jwt_versio
 jwt_tarball = "#{node['cluster']['sources_dir']}/libjwt-#{jwt_version}.tar.gz"
 jwt_sha256 = 'cb2fd95123689e7d209a3a8c060e02f68341c9a5ded524c0cd881a8cd20d711f'
 
-remote_file jwt_tarball do
-  source jwt_url
-  mode '0644'
-  retries 3
-  retry_delay 5
-  checksum jwt_sha256
-  action :create_if_missing
+# remote_file jwt_tarball do
+#   source jwt_url
+#   mode '0644'
+#   retries 3
+#   retry_delay 5
+#   checksum jwt_sha256
+#   action :create_if_missing
+# end
+
+bash 'get jwt from s3' do
+  user 'root'
+  group 'root'
+  cwd "#{node['cluster']['sources_dir']}"
+  code <<-JWT
+    set -e
+    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/jwt/v#{jwt_version}.tar.gz #{jwt_tarball}
+    JWT
 end
 
 jwt_dependencies 'Install jwt dependencies'

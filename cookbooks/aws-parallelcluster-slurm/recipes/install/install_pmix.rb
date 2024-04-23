@@ -21,13 +21,23 @@ pmix_url = "https://github.com/openpmix/openpmix/releases/download/v#{pmix_versi
 pmix_sha256 = node['cluster']['pmix']['sha256']
 pmix_tarball = "#{node['cluster']['sources_dir']}/pmix-#{pmix_version}.tar.gz"
 
-remote_file pmix_tarball do
-  source pmix_url
-  mode '0644'
-  retries 3
-  retry_delay 5
-  checksum pmix_sha256
-  action :create_if_missing
+# remote_file pmix_tarball do
+#   source pmix_url
+#   mode '0644'
+#   retries 3
+#   retry_delay 5
+#   checksum pmix_sha256
+#   action :create_if_missing
+# end
+
+bash 'get pmix from s3' do
+  user 'root'
+  group 'root'
+  cwd "#{node['cluster']['sources_dir']}"
+  code <<-PMIX
+    set -e
+    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/pmix/pmix-#{pmix_version}.tar.gz #{pmix_tarball}
+    PMIX
 end
 
 bash 'Install PMIx' do

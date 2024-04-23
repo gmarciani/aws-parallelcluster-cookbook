@@ -62,14 +62,23 @@ end
 
 action :download_source_code do
   # Get munge tarball
-  remote_file munge_tarball do
-    source munge_url
-    mode '0644'
-    retries 3
-    retry_delay 5
-    checksum munge_sha256
-    action :create_if_missing
+  bash 'get munge from s3' do
+    user 'root'
+    group 'root'
+    cwd "#{node['cluster']['sources_dir']}"
+    code <<-MUNGE
+    set -e
+    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/munge/munge-#{munge_version}.tar.gz #{munge_tarball}
+    MUNGE
   end
+  # remote_file munge_tarball do
+  #   source munge_url
+  #   mode '0644'
+  #   retries 3
+  #   retry_delay 5
+  #   checksum munge_sha256
+  #   action :create_if_missing
+  # end
 end
 
 action :compile_and_install do

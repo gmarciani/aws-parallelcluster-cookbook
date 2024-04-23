@@ -21,25 +21,23 @@ action :setup do
   return unless _nvidia_dcgm_enabled
 
   # Add NVIDIA repo for fabric manager and datacenter-gpu-manager
-  nvidia_repo 'add nvidia repository' do
-    action :add
-  end
+  # nvidia_repo 'add nvidia repository' do
+  #   action :add
+  # end
 
-  package 'datacenter-gpu-manager' do
-    retries 3
-    retry_delay 5
-    version package_version
-  end
+  # package 'datacenter-gpu-manager' do
+  #   retries 3
+  #   retry_delay 5
+  #   version package_version
+  # end
 
-  nvidia_repo 'remove nvidia repository' do
-    action :remove
-  end
+  action_install_package
+
+  # nvidia_repo 'remove nvidia repository' do
+  #   action :remove
+  # end
 end
 
 def _nvidia_enabled
   nvidia_enabled.nil? ? ['yes', true].include?(node['cluster']['nvidia']['enabled']) : nvidia_enabled
-end
-
-def package_version
-  node['cluster']['nvidia']['dcgm_version']
 end

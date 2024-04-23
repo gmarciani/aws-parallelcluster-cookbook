@@ -13,29 +13,35 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 action :install_package do
-  # For ubuntu, CINC17 apt-package resources need full versions for `version`
-  execute "install_fabricmanager_for_ubuntu" do
-    bash "Install #{fabric_manager_package}" do
-      user 'root'
-      code <<-FABRIC_MANAGER
-      set -e
-      aws s3 cp #{fabric_manager_url} #{fabric_manager_package}-#{fabric_manager_version}.deb
-      FABRIC_MANAGER
-      retries 3
-      retry_delay 5
-    end
 
-    command "apt -y install #{fabric_manager_package}-#{fabric_manager_version}.deb "\
-            "&& apt-mark hold #{fabric_manager_package}"
+  bash "Install #{dcgm_package}" do
+    user 'root'
+    code <<-DCGM_INSTALL
+    set -e
+    aws s3 cp #{dcgm_url} #{dcgm_package}-#{package_version}.deb
+    DCGM_INSTALL
     retries 3
     retry_delay 5
   end
+
+  command "apt -y install #{dcgm_package}-#{package_version}.deb "
+  retries 3
+  retry_delay 5
+
+end
+
+def dcgm_url
+  "s3://hgreebe-dependencies/archives/dependencies/nvidia_dcgm/#{platform}/#{dcgm_package}_#{package_version}_#{arch_suffix}.deb"
+end
+
+def dcgm_package
+  'datacenter-gpu-manager'
 end
 
 def arch_suffix
   arm_instance? ? 'arm64' : 'amd64'
 end
 
-def fabric_manager_url
-  "s3://hgreebe-dependencies/archives/dependencies/nvidia_fabric/#{platform}/#{fabric_manager_package}_#{fabric_manager_version}-1_#{arch_suffix}.deb"
+def package_version
+  node['cluster']['nvidia']['dcgm_version']
 end

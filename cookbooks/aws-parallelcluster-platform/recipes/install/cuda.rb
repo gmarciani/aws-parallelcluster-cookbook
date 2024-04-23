@@ -35,12 +35,25 @@ node.default['cluster']['nvidia']['cuda_samples_version'] = cuda_samples_version
 node_attributes 'Save cuda and cuda samples versions for InSpec tests'
 
 # Get CUDA run file
-remote_file tmp_cuda_run do
-  source cuda_url
-  mode '0755'
-  retries 3
-  retry_delay 5
-  not_if { ::File.exist?("/usr/local/cuda-#{cuda_version}") }
+# remote_file tmp_cuda_run do
+#   source cuda_url
+#   mode '0755'
+#   retries 3
+#   retry_delay 5
+#   not_if { ::File.exist?("/usr/local/cuda-#{cuda_version}") }
+# end
+
+bash 'get cuda and cuda samples from s3' do
+  user 'root'
+  group 'root'
+  cwd "#{node['cluster']['sources_dir']}"
+  code <<-CUDA
+    set -e
+    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/cuda/cuda_#{cuda_complete_version}_#{cuda_version_suffix}_#{cuda_arch}.run #{tmp_cuda_run}
+    chmod 755 #{tmp_cuda_run}
+    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/cuda/samples/v#{cuda_samples_version}.tar.gz #{tmp_cuda_sample_archive}
+    chmod 644 #{tmp_cuda_sample_archive}
+    CUDA
 end
 
 # Install CUDA driver
@@ -57,13 +70,13 @@ bash 'cuda.run advanced' do
 end
 
 # Get CUDA Sample Files
-remote_file tmp_cuda_sample_archive do
-  source cuda_samples_url
-  mode '0644'
-  retries 3
-  retry_delay 5
-  not_if { ::File.exist?("/usr/local/cuda-#{cuda_version}/samples") }
-end
+# remote_file tmp_cuda_sample_archive do
+#   source cuda_samples_url
+#   mode '0644'
+#   retries 3
+#   retry_delay 5
+#   not_if { ::File.exist?("/usr/local/cuda-#{cuda_version}/samples") }
+# end
 
 # Unpack CUDA Samples
 bash 'cuda.sample install' do

@@ -38,13 +38,23 @@ action :setup do
     recursive true
   end
 
-  remote_file gdrcopy_tarball do
-    source gdrcopy_url
-    mode '0644'
-    retries 3
-    retry_delay 5
-    checksum gdrcopy_checksum
-    action :create_if_missing
+  # remote_file gdrcopy_tarball do
+  #   source gdrcopy_url
+  #   mode '0644'
+  #   retries 3
+  #   retry_delay 5
+  #   checksum gdrcopy_checksum
+  #   action :create_if_missing
+  # end
+
+  bash 'get gdrcopy from s3' do
+    user 'root'
+    group 'root'
+    cwd "#{node['cluster']['sources_dir']}"
+    code <<-GDR
+    set -e
+    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/gdr_copy/v#{gdrcopy_version}.tar.gz #{gdrcopy_tarball}
+    GDR
   end
 
   package_repos 'update package repos' do

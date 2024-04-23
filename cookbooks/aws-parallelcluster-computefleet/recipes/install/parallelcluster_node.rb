@@ -30,7 +30,6 @@ install_pyenv 'pyenv for default python version'
 activate_virtual_env node_virtualenv_name do
   pyenv_path node_virtualenv_path
   python_version node_python_version
-  not_if { ::File.exist?("#{virtualenv_path}/bin/activate") }
 end
 
 if is_custom_node?

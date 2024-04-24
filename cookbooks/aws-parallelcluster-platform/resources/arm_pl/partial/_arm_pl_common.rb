@@ -111,27 +111,21 @@ action :setup do
   end
 
   gcc_version = "#{gcc_major_minor_version}.#{new_resource.gcc_patch_version}"
-  gcc_url = "https://ftp.gnu.org/gnu/gcc/gcc-#{gcc_version}/gcc-#{gcc_version}.tar.gz"
   gcc_tarball = "#{new_resource.sources_dir}/gcc-#{gcc_version}.tar.gz"
 
   # Get gcc tarball
-  # remote_file gcc_tarball do
-  #   source gcc_url
-  #   mode '0644'
-  #   retries 5
-  #   retry_delay 10
-  #   ssl_verify_mode :verify_none
-  #   action :create_if_missing
-  # end
-
   bash 'get gcc from s3' do
     user 'root'
     group 'root'
     cwd "#{node['cluster']['sources_dir']}"
     code <<-GCC
     set -e
-    aws s3 cp s3://hgreebe-dependencies/archives/dependencies/gcc/gcc-#{gcc_version}.tar.gz #{gcc_tarball}
+    aws s3 cp #{node['cluster']['artifacts_build_url']}/gcc/gcc-#{gcc_version}.tar.gz #{gcc_tarball}
+    chmod 644 #{gcc_tarball}
     GCC
+    retries 5
+    retry_delay 10
+    ssl_verify_mode :verify_none
   end
 
   # Install gcc

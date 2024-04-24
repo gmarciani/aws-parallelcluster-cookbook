@@ -31,7 +31,7 @@ action :install_package do
 end
 
 def dcgm_url
-  "s3://hgreebe-dependencies/archives/dependencies/nvidia_dcgm/#{platform}/#{dcgm_package}_#{package_version}_#{arch_suffix}.deb"
+  "#{node['cluster']['artifacts_build_url']}/nvidia_dcgm/#{platform}/#{dcgm_package}_#{package_version}_#{arch_suffix}.deb"
 end
 
 def dcgm_package

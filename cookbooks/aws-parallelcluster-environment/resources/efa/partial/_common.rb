@@ -55,14 +55,17 @@ end
 
 action :download_and_install do
   # Get EFA Installer
-  efa_installer_url = "https://efa-installer.amazonaws.com/aws-efa-installer-#{new_resource.efa_version}.tar.gz"
-  remote_file efa_tarball do
-    source efa_installer_url
-    mode '0644'
+  bash 'get efa from s3' do
+    user 'root'
+    group 'root'
+    cwd "#{node['cluster']['sources_dir']}"
+    code <<-EFA
+    set -e
+    aws s3 cp #{node['cluster']['artifacts_build_url']}/efa/aws-efa-installer-#{new_resource.efa_version}.tar.gz #{efa_tarball}
+    chmod 0644 #{efa_tarball}
+    EFA
     retries 3
     retry_delay 5
-    checksum new_resource.efa_checksum
-    action :create_if_missing
   end
 
   installer_options = "-y"

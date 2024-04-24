@@ -33,6 +33,19 @@ activate_virtual_env virtualenv_name do
   not_if { ::File.exist?("#{virtualenv_path}/bin/activate") }
 end
 
+bash 'pip install' do
+  user 'root'
+  group 'root'
+  cwd "#{node['cluster']['base_dir']}"
+  code <<-REQ
+    set -e
+    aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/cfn-dependencies.tgz cfn-dependencies.tgz
+    tar xzf cfn-dependencies.tgz
+    cd cfn
+    #{virtualenv_path}/bin/pip install * -f ./ --no-index
+    REQ
+end
+
 cfnbootstrap_version = '2.0-28'
 cfnbootstrap_package = "aws-cfn-bootstrap-py3-#{cfnbootstrap_version}.tar.gz"
 

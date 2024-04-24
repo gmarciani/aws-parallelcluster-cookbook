@@ -32,5 +32,5 @@ def arch_suffix
 end
 
 def fabric_manager_url
-  "s3://hgreebe-dependencies/archives/dependencies/nvidia_fabric/#{platform}/#{fabric_manager_package}-#{fabric_manager_version}-1.#{arch_suffix}.rpm"
+  "#{node['cluster']['artifacts_build_url']}/nvidia_fabric/#{platform}/#{fabric_manager_package}-#{fabric_manager_version}-1.#{arch_suffix}.rpm"
 end

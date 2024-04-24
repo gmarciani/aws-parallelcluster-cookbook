@@ -34,10 +34,6 @@ archive_file 'extract awscli bundle' do
   overwrite true
 end
 
-alinux_extras_topic 'python 3.8' do
-  topic 'python3.8'
-end
-
 bash 'install awscli' do
   code "#{cookbook_virtualenv_path}/bin/python#{node['cluster']['python-major-minor-version']} #{file_cache_path}/awscli/awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws"
 end

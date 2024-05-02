@@ -29,13 +29,21 @@ action :run do
       recursive true
     end
 
+    remote_file "#{prefix}/Python-#{python_version}.tgz" do
+      source "https://d6csdolao8llw.cloudfront.net/archives/dependencies/python/Python-#{python_version}.tgz"
+      mode '0644'
+      retries 3
+      retry_delay 5
+      action :create_if_missing
+    end
+
     bash "install python #{python_version}" do
       user 'root'
       group 'root'
       cwd "#{prefix}"
       code <<-VENV
       set -e
-      aws s3 cp #{node['cluster']['artifacts_build_url']}/python/Python-#{python_version}.tgz Python-#{python_version}.tgz
+      # aws s3 cp #{node['cluster']['artifacts_build_url']}/python/Python-#{python_version}.tgz Python-#{python_version}.tgz
       tar -xzf Python-#{python_version}.tgz
       cd Python-#{python_version}
       ./configure --prefix=#{prefix}/versions/#{python_version}

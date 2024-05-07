@@ -140,7 +140,7 @@ action :setup do
         tar -xf #{gcc_tarball}
         cd gcc-#{gcc_version}
         # Patch the download_prerequisites script to download over https and not ftp. This works better in China regions.
-        sed -i "s#ftp://gcc\.gnu\.org#https://gcc.gnu.org#g" ./contrib/download_prerequisites
+        sed -i "s#ftp://gcc\.gnu\.org/pub/gcc/infrastructure/#https://d6csdolao8llw.cloudfront.net/archives/dependencies/gcc/#g" ./contrib/download_prerequisites
         ./contrib/download_prerequisites
         mkdir build && cd build
         ../configure --prefix=/opt/arm/armpl/gcc/#{gcc_version} --disable-bootstrap --enable-checking=release --enable-languages=c,c++,fortran --disable-multilib

@@ -31,8 +31,8 @@ cookbook_file "#{virtualenv_path}/requirements.txt" do
   mode '0755'
 end
 
-remote_file "#{node['cluster']['base_dir']}/dependencies.tar.gz" do
-  source "https://d6csdolao8llw.cloudfront.net/archives/dependencies/PyPi/dependencies.tar.gz"
+remote_file "#{node['cluster']['base_dir']}/cookbook-dependencies.tgz" do
+  source "https://d6csdolao8llw.cloudfront.net/archives/dependencies/PyPi/#{node['kernel']['machine']}/cookbook-dependencies.tgz"
   mode '0644'
   retries 3
   retry_delay 5
@@ -45,8 +45,8 @@ bash 'pip install' do
   cwd "#{node['cluster']['base_dir']}"
   code <<-REQ
     set -e
-    # aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/dependencies.tar.gz dependencies.tar.gz
-    tar xzf dependencies.tar.gz
+    # aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/#{node['kernel']['machine']}/cookbook-dependencies.tgz cookbook-dependencies.tgz
+    tar xzf cookbook-dependencies.tgz
     cd dependencies
     #{virtualenv_path}/bin/pip install * -f ./ --no-index
     REQ

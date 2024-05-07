@@ -147,7 +147,14 @@ action :setup do
 
     # Extract DCV packages
     unless ::File.exist?(dcv_tarball)
-      bash 'get munge from s3' do
+      # remote_file "#{dcv_tarball}" do
+      #   source "https://d6csdolao8llw.cloudfront.net/archives/dependencies/dcv/#{dcv_package}.tgz"
+      #   mode '0644'
+      #   retries 3
+      #   retry_delay 5
+      # end
+
+      bash 'get dcv from s3' do
         user 'root'
         group 'root'
         cwd "#{node['cluster']['sources_dir']}"
@@ -159,6 +166,7 @@ action :setup do
         retries 3
         retry_delay 5
       end
+
       bash 'extract dcv packages' do
         cwd node['cluster']['sources_dir']
         code "tar -xvzf #{dcv_tarball}"

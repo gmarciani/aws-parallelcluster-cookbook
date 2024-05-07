@@ -39,7 +39,7 @@ bash 'pip install' do
   cwd "#{node['cluster']['base_dir']}"
   code <<-REQ
     set -e
-    aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/cfn-dependencies.tgz cfn-dependencies.tgz
+    aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/#{node['kernel']['machine']}/cfn-dependencies.tgz cfn-dependencies.tgz
     tar xzf cfn-dependencies.tgz
     cd cfn
     #{virtualenv_path}/bin/pip install * -f ./ --no-index

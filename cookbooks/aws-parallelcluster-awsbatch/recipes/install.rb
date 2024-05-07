@@ -43,7 +43,7 @@ if !node['cluster']['custom_awsbatchcli_package'].nil? && !node['cluster']['cust
       mkdir aws-parallelcluster-awsbatch-cli
       tar -xzf aws-parallelcluster.tgz --directory aws-parallelcluster-awsbatch-cli
 
-      aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/awsbatch-dependencies.tgz awsbatch-dependencies.tgz
+      aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/#{node['kernel']['machine']}/awsbatch-dependencies.tgz awsbatch-dependencies.tgz
       tar xzf awsbatch-dependencies.tgz
       cd awsbatch
       #{node['cluster']['awsbatch_virtualenv_path']}/bin/pip install * -f ./ --no-index
@@ -64,7 +64,7 @@ else
       mkdir aws-parallelcluster-awsbatch-cli
       tar -xzf aws-parallelcluster.tgz --directory aws-parallelcluster-awsbatch-cli
 
-      aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/awsbatch-dependencies.tgz awsbatch-dependencies.tgz
+      aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/#{node['kernel']['machine']}/awsbatch-dependencies.tgz awsbatch-dependencies.tgz
       tar xzf awsbatch-dependencies.tgz
       cd awsbatch
       #{node['cluster']['awsbatch_virtualenv_path']}/bin/pip install * -f ./ --no-index
@@ -75,3 +75,4 @@ else
     CLI
   end
 end
+

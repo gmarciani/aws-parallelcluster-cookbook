@@ -125,7 +125,6 @@ action :setup do
     GCC
     retries 5
     retry_delay 10
-    ssl_verify_mode :verify_none
   end
 
   # Install gcc

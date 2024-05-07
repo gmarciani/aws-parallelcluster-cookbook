@@ -49,7 +49,7 @@ else
     mkdir aws-parallelcluster-node
     tar -xzf aws-parallelcluster-node.tgz --directory aws-parallelcluster-node
 
-    aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/node-dependencies.tgz node-dependencies.tgz
+    aws s3 cp #{node['cluster']['artifacts_build_url']}/PyPi/#{node['kernel']['machine']}/node-dependencies.tgz node-dependencies.tgz
     tar xzf node-dependencies.tgz
     cd node
     #{node_virtualenv_path}/bin/pip install * -f ./ --no-index

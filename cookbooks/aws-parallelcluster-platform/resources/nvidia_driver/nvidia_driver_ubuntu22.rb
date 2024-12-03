@@ -13,11 +13,20 @@
 # See the License for the specific language governing permissions and limitations under the License.
 
 provides :nvidia_driver, platform: 'ubuntu' do |node|
-  node['platform_version'].to_i >= 20
+  node['platform_version'].to_i == 22
 end
 
 use 'partial/_nvidia_driver_common.rb'
 
 def rebuild_initramfs?
   true
+end
+
+def compiler_version
+  # gcc 12.3.0 is the default version installed
+  'gcc'
+end
+
+def compiler_path
+  'CC=/usr/bin/gcc-12'
 end

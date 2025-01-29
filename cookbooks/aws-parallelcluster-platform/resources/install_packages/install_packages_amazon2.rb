@@ -68,3 +68,12 @@ action :install_extras do
     end
   end
 end
+
+action :remove_packages do
+  package 'openssl11-devel' do
+    action 'remove'
+    retries 10
+    retry_delay 5
+    flush_cache({ before: true })
+  end
+end

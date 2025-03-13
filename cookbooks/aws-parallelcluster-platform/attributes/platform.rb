@@ -18,7 +18,7 @@ default['cluster']['enroot']['persistent_dir'] = '/var/enroot'
 default['cluster']['nvidia']['enabled'] = 'no'
 default['cluster']['nvidia']['driver_version'] = '570.86.15'
 default['cluster']['nvidia']['dcgm_version'] = '3.3.6'
-if platform?('amazon') && node['platform_version'] == "2"
+if platform?('amazon') && node['platform_version'] == "2" || platform?('rocky') && node['platform_version'] == "9"
   default['cluster']['nvidia']['driver_version'] = '550.127.08'
 end
 

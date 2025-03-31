@@ -16,9 +16,17 @@
 mount "#{node['cluster']['slurm']['install_dir']}" do
   device(lazy { "#{node['cluster']['head_node_private_ip']}:#{node['cluster']['slurm']['install_dir']}" })
   fstype "nfs"
-  options node['cluster']['nfs']['hard_mount_options']
+  options 'soft,timeo=20,retrans=3,_netdev,noatime'
   action %i(mount enable)
   retries 10
   retry_delay 6
   only_if { node['cluster']['shared_storage_type'] == 'ebs' }
 end
+
+service slurmd stop
+pkill -9 slurmstepd
+umount /opt/slurm
+mount -o soft,timeo=20,retrans=3,_netdev,noatime 27.6.44.29:/opt/slurm
+mount | grep nfs
+service slurmd start
+ps aux | grep slurm

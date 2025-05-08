@@ -9,6 +9,9 @@ This file is used to list changes made in each version of the AWS ParallelCluste
 **CHANGES**
 - Upgrade Slurm to version 24.05.8.
 
+**BUG FIXES**
+- Use `v2.1.0-patched.tar.gz` which pins backtrace version to v3.0.74
+
 3.13.0
 ------
 **ENHANCEMENTS**

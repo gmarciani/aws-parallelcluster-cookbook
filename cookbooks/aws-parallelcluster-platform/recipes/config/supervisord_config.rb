@@ -23,7 +23,7 @@ template "#{node['cluster']['etc_dir']}/parallelcluster_supervisord.conf" do
   mode '0644'
   variables(
     region: region,
-    aws_ca_bundle: region.start_with?('us-iso') ? "/etc/pki/#{region}/certs/ca-bundle.pem" : '',
+    aws_ca_bundle: region.start_with?('us-iso') ? "/etc/pki/tls/#{region}/certs/ca-bundle.pem" : '',
     dcv_configured: (node['cluster']['dcv_enabled'] == "head_node" ||
                     node['cluster']['dcv_enabled'] == "login_node") &&
                     dcv_installed?,

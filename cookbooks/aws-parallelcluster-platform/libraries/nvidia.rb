@@ -38,3 +38,7 @@ end
 def is_gb200_node?
   get_nvswitch_count(get_device_ids['gb200']) > 1
 end
+
+def is_b200_node?
+  get_nvswitch_count(get_device_ids['b200']) > 1
+end

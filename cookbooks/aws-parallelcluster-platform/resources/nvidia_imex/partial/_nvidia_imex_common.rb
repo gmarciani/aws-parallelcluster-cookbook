@@ -20,6 +20,7 @@ action :install do
   return if on_docker? || imex_installed?
 
   package nvidia_imex_package do
+    version nvidia_imex_full_version
     retries 3
     retry_delay 5
   end
@@ -89,6 +90,12 @@ end
 
 def nvidia_imex_service
   'nvidia-imex'
+end
+
+# IMEX version aligned to the configured NVIDIA driver version (matching the
+# package release published in the NVIDIA repo, e.g. "595.71.05-1").
+def nvidia_imex_full_version
+  "#{node['cluster']['nvidia']['driver_version']}-1"
 end
 
 def imex_installed?

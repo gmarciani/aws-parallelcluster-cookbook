@@ -205,6 +205,8 @@ describe 'nvidia_imex:install' do
       %w(aarch64 x86_64).each do |arm_or_x86|
         context "when nvidia is enabled on #{arm_or_x86}" do
           cached(:nvidia_imex_package) { "nvidia-imex" }
+          cached(:driver_version) { 'test_driver_version' }
+          cached(:nvidia_imex_full_version) { "#{driver_version}-1" }
 
           cached(:chef_run) do
             stubs_for_resource('nvidia_imex') do |res|
@@ -218,12 +220,14 @@ describe 'nvidia_imex:install' do
 
           before do
             chef_run.node.override['cluster']['region'] = 'aws_region'
+            chef_run.node.override['cluster']['nvidia']['driver_version'] = driver_version
             chef_run.node.automatic['kernel']['machine'] = arm_or_x86
             ConvergeNvidiaImex.install(chef_run)
           end
 
-          it 'installs nvidia-imex from nvidia repo' do
+          it 'installs nvidia-imex from nvidia repo pinned to the driver version' do
             is_expected.to install_package(nvidia_imex_package)
+              .with(version: nvidia_imex_full_version)
               .with(retries: 3)
               .with(retry_delay: 5)
           end
